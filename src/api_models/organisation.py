@@ -3,7 +3,7 @@ from enum import Enum
 
 
 class OrganisationReview(BaseModel):
-    comment_text: str | None = Field(description="Отзыв на организацию")
+    comment_text: str | None = Field(default=None, description="Отзыв на организацию")
     rate: float = Field(description="Оценка организации")
     category: str | None = Field(description="Категория отзыва")
     highlights: list[str] = Field(default=[], description="Хайлайты в тексте отзыва")
