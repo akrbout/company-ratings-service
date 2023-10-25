@@ -13,8 +13,7 @@ async def startup():
 @app.get("/")
 async def root():
     db = crud.StorageSession()
-    user = await db.get_user_by_username("test1")
-    print(user)
+    user = await db.is_user_exist("test")
     return user
 
 
