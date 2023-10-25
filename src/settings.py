@@ -20,6 +20,7 @@ class DatabaseSettings(BaseSettings):
 
 class AuthSettings(BaseSettings):
     secret: str
+    algorithm: str
 
     class Config:
         env_prefix = "AUTH_"
