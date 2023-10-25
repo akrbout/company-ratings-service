@@ -25,4 +25,5 @@ class AuthSettings(BaseSettings):
         env_prefix = "AUTH_"
 
 
+auth_settings = AuthSettings()
 database_settings = DatabaseSettings()
