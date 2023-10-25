@@ -1,6 +1,5 @@
 from fastapi import FastAPI, status, HTTPException
 from fastapi.responses import RedirectResponse
-from src.settings import service_settings
 from src.storage import engine, crud
 from src.service.profile import ProfileService
 from src.api_models import user
