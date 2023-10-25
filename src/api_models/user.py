@@ -2,12 +2,12 @@ from pydantic import BaseModel, Field, EmailStr, AnyUrl
 from enum import Enum
 
 
-class AccountRoles(Enum, str):
+class AccountRoles(Enum):
     default = "default"
     business = "business"
 
 
-class SocialAccountType(Enum, str):
+class SocialAccountType(Enum):
     vk = "vk"
 
 
@@ -17,8 +17,17 @@ class SocialAccount(BaseModel):
 
 
 class User(BaseModel):
-    username: str = Field(description="Никнейм пользователя")
+    username: str = Field(description="Никнейм пользователя", min_length=5, max_length=20)
     email: EmailStr = Field(description="Почта пользователя")
     role: AccountRoles = Field(default=AccountRoles.default, description="Тип аккаунта пользователя")
     full_nm: str | None = Field(default=None, description="ФИО пользователя")
     social_links: list[SocialAccount] = Field(default=[], description="Ссылки на социальные сети")
+
+
+class RegistrateUser(User):
+    password: str = Field(min_length=8, max_length=32)
+
+
+class ProfileStatus(BaseModel):
+    status: bool = Field()
+    message: str = Field()

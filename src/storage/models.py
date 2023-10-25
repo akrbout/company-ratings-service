@@ -83,7 +83,7 @@ class SocialAccount(Base):
 class User(Base):
     id = Column(Integer)
     username = Column(String, nullable=False, index=True)
-    email = Column(String, nullable=False)
+    email = Column(String, nullable=False, index=True)
     key = Column(String, nullable=False)
     role = Column(String, nullable=False)
     organisations = relationship("Organisation", backref="user", uselist=False)
