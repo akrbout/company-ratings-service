@@ -1,0 +1,21 @@
+from pydantic_settings import BaseSettings
+
+
+class ServiceSettings(BaseSettings):
+    engine: str
+    user: str
+    password: str
+    host: str
+    port: str
+    name: str
+
+    @property
+    def connection_string(self) -> str:
+        if self.engine == "postgresql":
+            return f"{self.engine}+asyncpg://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}"
+
+    class Config:
+        env_prefix = "DATABASE_"
+
+
+service_settings = ServiceSettings()
