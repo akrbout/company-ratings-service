@@ -80,6 +80,20 @@ class SocialAccount(Base):
     )
 
 
+class Token(Base):
+    id = Column(Integer)
+    access_token = Column(String, index=True)
+    expires_in = Column(DateTime(), nullable=False)
+    is_active = Column(Boolean, default=True)
+    user_id = Column(Integer, ForeignKey("user.id"))
+
+    __tablename__ = "token"
+    __table_args__ = (
+        PrimaryKeyConstraint("id", name="token_pk"),
+        UniqueConstraint("access_token"),
+    )
+
+
 class User(Base):
     id = Column(Integer)
     username = Column(String, nullable=False, index=True)
@@ -89,6 +103,7 @@ class User(Base):
     organisations = relationship("Organisation", backref="user", uselist=False)
     full_nm = Column(String)
     social_links = relationship("SocialAccount")
+    tokens = relationship("Token")
     disabled = Column(Boolean, default=False)
     created_on = Column(DateTime(), default=datetime.now())
     updated_on = Column(DateTime(), default=datetime.now())

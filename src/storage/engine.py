@@ -1,8 +1,8 @@
 from sqlalchemy.ext.asyncio import create_async_engine
-from src.settings import service_settings
+from src.settings import database_settings
 from src.storage.models import Base
 
-engine = create_async_engine(service_settings.connection_string)
+engine = create_async_engine(database_settings.connection_string)
 
 
 async def create_db():

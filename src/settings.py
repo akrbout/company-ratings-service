@@ -1,7 +1,7 @@
 from pydantic_settings import BaseSettings
 
 
-class ServiceSettings(BaseSettings):
+class DatabaseSettings(BaseSettings):
     engine: str
     user: str
     password: str
@@ -18,4 +18,11 @@ class ServiceSettings(BaseSettings):
         env_prefix = "DATABASE_"
 
 
-service_settings = ServiceSettings()
+class AuthSettings(BaseSettings):
+    secret: str
+
+    class Config:
+        env_prefix = "AUTH_"
+
+
+database_settings = DatabaseSettings()
