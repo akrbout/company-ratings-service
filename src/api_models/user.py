@@ -28,6 +28,16 @@ class RegistrateUser(User):
     password: str = Field(min_length=8, max_length=32)
 
 
+class AuthUser(BaseModel):
+    username: str = Field(min_length=5, max_length=20)
+    password: str = Field(min_length=8, max_length=32)
+
+
 class ProfileStatus(BaseModel):
     status: bool = Field()
     message: str = Field()
+
+
+class AuthStatus(BaseModel):
+    status: bool = Field()
+    access_token: str | None = Field()

@@ -1,5 +1,7 @@
-from fastapi import FastAPI, status, HTTPException
+from fastapi import FastAPI, status, HTTPException, Depends
 from fastapi.responses import RedirectResponse
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from typing import Annotated
 from src.storage import engine, crud
 from src.service.profile import ProfileService
 from src.api_models import user
@@ -24,6 +26,11 @@ async def reg_user(user: user.RegistrateUser) -> user.ProfileStatus:
         raise HTTPException(status_code=400, detail=create_user.message)
     else:
         return create_user
+
+
+@app.post("/token")
+async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
+    pass
 
 
 @app.get("/healtz", status_code=status.HTTP_200_OK)
