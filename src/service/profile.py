@@ -1,6 +1,7 @@
 from src.storage import crud, models as db_models
 from datetime import datetime, timedelta
 from src.api_models.user import User as ApiUser, RegistrateUser, ProfileStatus, AuthUser, AuthStatus, AccountRoles
+from src.api_models import service
 from src.settings import auth_settings
 from jose import JWTError, jwt
 from passlib.context import CryptContext
@@ -13,7 +14,7 @@ class ProfileService:
         self.pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
         self._auth_settings = auth_settings
 
-    def _create_access_token(self, data: dict, expires_delta: timedelta | None = None):
+    def _create_access_token(self, data: dict, expires_delta: timedelta | None = None) -> str:
         to_encode = data.copy()
         if expires_delta:
             expire = datetime.now() + expires_delta
@@ -24,9 +25,9 @@ class ProfileService:
         return encoded_jwt
 
     async def authenticate_user(self, auth_data: AuthUser) -> AuthStatus:
-        db_user: db_models.User = self.db.get_user_by_username(auth_data.username)
+        db_user: db_models.User = await self.db.get_user_by_username(auth_data.username)
         if not db_user:
-            return AuthStatus(status=False, user=None)
+            return AuthStatus(status=False, access_token=None)
         is_password_correct = self.pwd_context.verify(auth_data.password, db_user.key)
         if not is_password_correct:
             raise errors.BadPassword(message="Bad password")
@@ -36,7 +37,10 @@ class ProfileService:
             role=AccountRoles(db_user.role),
             full_nm=db_user.full_nm,
         )
+        print(db_user.social_links)
         data = dict(user=user.model_dump())
+        access_token = self._create_access_token(data)
+        return AuthStatus(status=True, access_token=access_token)
 
     async def registrate_user(self, reg_data: RegistrateUser) -> ProfileStatus:
         try:
