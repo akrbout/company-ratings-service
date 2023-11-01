@@ -2,18 +2,7 @@ from fastapi_users.db import SQLAlchemyBaseUserTable
 from sqlalchemy.orm import relationship, DeclarativeBase
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from sqlalchemy import (
-    Column,
-    Float,
-    String,
-    Integer,
-    Boolean,
-    ARRAY,
-    DateTime,
-    ForeignKey,
-    PrimaryKeyConstraint,
-    UniqueConstraint,
-)
+from sqlalchemy import Column, String, ARRAY, ForeignKey
 from datetime import datetime
 
 
@@ -51,7 +40,7 @@ class Organisation(Base):
     inn: Mapped[str | None]
     phone_num: Mapped[str | None]
     email: Mapped[str | None]
-    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
+    profile_id: Mapped[int] = mapped_column(ForeignKey("profile.id"))
     org_links = relationship("SocialGroup")
     reviews = relationship("OrganisationReview")
 
@@ -61,22 +50,23 @@ class Organisation(Base):
 class SocialAccount(Base):
     social_type: Mapped[str]
     link: Mapped[str] = mapped_column(unique=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("profile.id"))
 
     __tablename__ = "social_account"
 
 
 class Profile(Base):
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     full_nm = Column(String)
     role: Mapped[str] = mapped_column(nullable=False)
     organisations = relationship("Organisation", backref="user", uselist=False)
     social_links = relationship("SocialAccount")
+    user = relationship("User", back_populates="profile", uselist=False)
 
     __tablename__ = "profile"
 
 
 class User(SQLAlchemyBaseUserTable[int], Base):
-    id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(String, nullable=False, index=True)
-
+    profile = relationship("Profile", back_populates="user", uselist=False)
     __tablename__ = "user"

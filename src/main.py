@@ -33,27 +33,6 @@ async def reg_user(user: user.RegistrateUser) -> user.ProfileStatus:
         return create_user
 
 
-@app.post("/token")
-async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
-    try:
-        auth_model = user.AuthUser(username=form_data.username, password=form_data.password)
-    except pydantic.ValidationError as ex:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Bad data validation: {ex}",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    try:
-        auth_session = await ProfileService().authenticate_user(auth_model)
-        return {"access_token": auth_session.access_token, "token_type": "bearer"}
-    except errors.BadPassword:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-
-
 @app.get("/healtz", status_code=status.HTTP_200_OK)
 async def health_check() -> dict[str, int]:
     return {"status": status.HTTP_200_OK}
