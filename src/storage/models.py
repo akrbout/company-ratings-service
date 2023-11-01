@@ -104,7 +104,6 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     full_nm = Column(String)
     social_links = relationship("SocialAccount")
     tokens = relationship("Token")
-    disabled = Column(Boolean, default=False)
     created_on = Column(DateTime(), default=datetime.now())
     updated_on = Column(DateTime(), default=datetime.now())
 
