@@ -40,7 +40,7 @@ class Organisation(Base):
     inn: Mapped[str | None]
     phone_num: Mapped[str | None]
     email: Mapped[str | None]
-    profile_id: Mapped[int] = mapped_column(ForeignKey("profile.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     org_links = relationship("SocialGroup")
     reviews = relationship("OrganisationReview")
 
@@ -50,23 +50,15 @@ class Organisation(Base):
 class SocialAccount(Base):
     social_type: Mapped[str]
     link: Mapped[str] = mapped_column(unique=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("profile.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
 
     __tablename__ = "social_account"
 
 
-class Profile(Base):
-    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
-    full_nm = Column(String)
+class User(SQLAlchemyBaseUserTable[int], Base):
+    username: Mapped[str] = mapped_column(String, nullable=False, index=True)
+    full_nm: Mapped[str | None]
     role: Mapped[str] = mapped_column(nullable=False)
     organisations = relationship("Organisation", backref="user", uselist=False)
     social_links = relationship("SocialAccount")
-    user = relationship("User", back_populates="profile", uselist=False)
-
-    __tablename__ = "profile"
-
-
-class User(SQLAlchemyBaseUserTable[int], Base):
-    username: Mapped[str] = mapped_column(String, nullable=False, index=True)
-    profile = relationship("Profile", back_populates="user", uselist=False)
     __tablename__ = "user"
