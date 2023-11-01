@@ -13,7 +13,7 @@ sqlalchemy = "^2.0.22"
 pydantic-settings = "^2.0.3"
 asyncpg = "^0.28.0"
 alembic = "^1.12.0"
-fastapi-users = "^12.1.2"
+fastapi-users = {extras = ["sqlalchemy"], version = "^12.1.2"}
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 greenlet = "^3.0.1"

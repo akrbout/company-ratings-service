@@ -1,3 +1,4 @@
+from fastapi_users.db import SQLAlchemyBaseUserTable
 from sqlalchemy.orm import relationship, DeclarativeBase
 from sqlalchemy import (
     Column,
@@ -94,11 +95,10 @@ class Token(Base):
     )
 
 
-class User(Base):
+class User(SQLAlchemyBaseUserTable[int], Base):
     id = Column(Integer)
     username = Column(String, nullable=False, index=True)
     email = Column(String, nullable=False, index=True)
-    key = Column(String, nullable=False)
     role = Column(String, nullable=False)
     organisations = relationship("Organisation", backref="user", uselist=False)
     full_nm = Column(String)
