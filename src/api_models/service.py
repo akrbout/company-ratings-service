@@ -5,7 +5,6 @@ from pydantic import BaseModel
 class DefaultModel(BaseModel):
     username: str
     full_nm: str
-    role: str
 
 
 class UserRead(schemas.BaseUser[int], DefaultModel):

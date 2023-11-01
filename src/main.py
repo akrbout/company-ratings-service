@@ -1,10 +1,11 @@
-from fastapi import FastAPI, status, HTTPException
+from fastapi import FastAPI, status, Depends
 from fastapi.responses import RedirectResponse
 from fastapi.security import OAuth2PasswordBearer
-from src.service.profile import ProfileService
 
-from src.api_models import user
+from src.api_models import service
+from src.service.auth import auth_backend, current_active_user, fastapi_users
 from src.storage import engine
+from src.storage.models import User
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -20,14 +21,33 @@ async def startup():
 async def docs_redirect():
     return RedirectResponse(url="/docs")
 
+# SERVICE AUTH ROUTERS
+app.include_router(fastapi_users.get_auth_router(auth_backend), prefix="/auth/jwt", tags=["auth"])
+app.include_router(
+    fastapi_users.get_register_router(service.UserRead, service.UserCreate),
+    prefix="/auth",
+    tags=["auth"],
+)
+app.include_router(
+    fastapi_users.get_reset_password_router(),
+    prefix="/auth",
+    tags=["auth"],
+)
+app.include_router(
+    fastapi_users.get_verify_router(service.UserRead),
+    prefix="/auth",
+    tags=["auth"],
+)
+app.include_router(
+    fastapi_users.get_users_router(service.UserRead, service.UserUpdate),
+    prefix="/users",
+    tags=["users"],
+)
 
-@app.post("/registrate", description="Регистрация пользователя")
-async def reg_user(user: user.RegistrateUser) -> user.ProfileStatus:
-    create_user = await ProfileService().registrate_user(user)
-    if create_user.status is False:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=create_user.message)
-    else:
-        return create_user
+
+@app.get("/authenticated-route")
+async def authenticated_route(user: User = Depends(current_active_user)):
+    return {"message": f"Hello {user.email}!"}
 
 
 @app.get("/healtz", status_code=status.HTTP_200_OK)
