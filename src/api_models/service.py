@@ -1,13 +1,20 @@
 from fastapi_users import schemas
+from pydantic import BaseModel
 
 
-class UserRead(schemas.BaseUser[int]):
+class DefaultModel(BaseModel):
     username: str
+    full_nm: str
+    role: str
 
 
-class UserCreate(schemas.BaseUserCreate):
-    username: str
+class UserRead(schemas.BaseUser[int], DefaultModel):
+    pass
 
 
-class UserUpdate(schemas.BaseUserUpdate):
-    username: str
+class UserCreate(schemas.BaseUserCreate, DefaultModel):
+    pass
+
+
+class UserUpdate(schemas.BaseUserUpdate, DefaultModel):
+    pass

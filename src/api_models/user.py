@@ -1,5 +1,6 @@
-from pydantic import BaseModel, Field, EmailStr, AnyUrl
 from enum import Enum
+
+from pydantic import BaseModel, Field, EmailStr, AnyUrl
 
 
 class AccountRoles(Enum):

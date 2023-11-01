@@ -20,6 +20,8 @@ class DatabaseSettings(BaseSettings):
 
 class AuthSettings(BaseSettings):
     secret: str
+    reset_secret: str
+    verification_secret: str
     algorithm: str
 
     class Config:

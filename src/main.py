@@ -1,13 +1,10 @@
-import pydantic
-from fastapi import FastAPI, status, HTTPException, Depends
+from fastapi import FastAPI, status, HTTPException
 from fastapi.responses import RedirectResponse
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from typing import Annotated
-from src.storage import engine, crud
+from fastapi.security import OAuth2PasswordBearer
 from src.service.profile import ProfileService
-from src.api_models import user
-from src import errors
 
+from src.api_models import user
+from src.storage import engine
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 

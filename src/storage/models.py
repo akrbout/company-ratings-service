@@ -1,9 +1,10 @@
+from datetime import datetime
+
 from fastapi_users.db import SQLAlchemyBaseUserTable
-from sqlalchemy.orm import relationship, DeclarativeBase
+from sqlalchemy import String, ARRAY, ForeignKey
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from sqlalchemy import Column, String, ARRAY, ForeignKey
-from datetime import datetime
+from sqlalchemy.orm import relationship, DeclarativeBase
 
 
 class Base(DeclarativeBase):
@@ -61,4 +62,5 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     role: Mapped[str] = mapped_column(nullable=False)
     organisations = relationship("Organisation", backref="user", uselist=False)
     social_links = relationship("SocialAccount")
+
     __tablename__ = "user"
