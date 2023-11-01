@@ -1,5 +1,7 @@
 from fastapi_users.db import SQLAlchemyBaseUserTable
 from sqlalchemy.orm import relationship, DeclarativeBase
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column
 from sqlalchemy import (
     Column,
     Float,
@@ -16,100 +18,65 @@ from datetime import datetime
 
 
 class Base(DeclarativeBase):
-    pass
+    id: Mapped[int] = mapped_column(primary_key=True)
+    created_on: Mapped[datetime] = mapped_column(default=datetime.now())
+    updated_on: Mapped[datetime] = mapped_column(default=datetime.now())
 
 
 class OrganisationReview(Base):
-    id = Column(Integer)
-    comment_text = Column(String, nullable=False)
-    rate = Column(Float)
-    category = Column(String)
-    highlights = Column(ARRAY(String), nullable=True)
-    organisation_id = Column(Integer, ForeignKey("organisation.id"))
-    created_on = Column(DateTime(), default=datetime.now())
-    updated_on = Column(DateTime(), default=datetime.now())
+    comment_text: Mapped[str] = mapped_column(String, nullable=False)
+    rate: Mapped[float | None]
+    category: Mapped[str | None]
+    highlights: Mapped[list[str]] = mapped_column(ARRAY(String))
+    organisation_id: Mapped[int] = mapped_column(ForeignKey("organisation.id"))
 
     __tablename__ = "organisation_review"
-    __table_args__ = (PrimaryKeyConstraint("id", name="organisation_review_pk"),)
 
 
 class SocialGroup(Base):
-    id = Column(Integer)
-    social_type = Column(String, nullable=False)
-    link = Column(String, nullable=False)
-    organisation_id = Column(Integer, ForeignKey("organisation.id"))
-    created_on = Column(DateTime(), default=datetime.now())
-    updated_on = Column(DateTime(), default=datetime.now())
+    social_type: Mapped[str]
+    link: Mapped[str]
+    organisation_id: Mapped[int] = mapped_column(ForeignKey("organisation.id"))
 
     __tablename__ = "social_group"
-    __table_args__ = (PrimaryKeyConstraint("id", name="social_group_pk"),)
 
 
 class Organisation(Base):
-    id = Column(Integer)
-    full_nm = Column(String, nullable=False)
-    name = Column(String, nullable=False)
-    address = Column(String, nullable=False)
-    longitude = Column(Float, nullable=False)
-    latitude = Column(Float, nullable=False)
-    result_rating = Column(Float)
-    inn = Column(String)
-    phone_num = Column(String)
-    email = Column(String)
-    user_id = Column(Integer, ForeignKey("user.id"))
+    full_nm: Mapped[str]
+    name: Mapped[str]
+    address: Mapped[str]
+    longitude: Mapped[float]
+    latitude: Mapped[float]
+    result_rating: Mapped[float | None]
+    inn: Mapped[str | None]
+    phone_num: Mapped[str | None]
+    email: Mapped[str | None]
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     org_links = relationship("SocialGroup")
     reviews = relationship("OrganisationReview")
-    created_on = Column(DateTime(), default=datetime.now())
-    updated_on = Column(DateTime(), default=datetime.now())
 
     __tablename__ = "organisation"
-    __table_args__ = (PrimaryKeyConstraint("id", name="organisation_pk"),)
 
 
 class SocialAccount(Base):
-    id = Column(Integer)
-    social_type = Column(String, nullable=False)
-    link = Column(String, nullable=False)
-    user_id = Column(Integer, ForeignKey("user.id"))
-    created_on = Column(DateTime(), default=datetime.now())
-    updated_on = Column(DateTime(), default=datetime.now())
+    social_type: Mapped[str]
+    link: Mapped[str] = mapped_column(unique=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
 
     __tablename__ = "social_account"
-    __table_args__ = (
-        PrimaryKeyConstraint("id", name="socal_account_pk"),
-        UniqueConstraint("link"),
-    )
 
 
-class Token(Base):
-    id = Column(Integer)
-    access_token = Column(String, index=True)
-    expires_in = Column(DateTime(), nullable=False)
-    is_active = Column(Boolean, default=True)
-    user_id = Column(Integer, ForeignKey("user.id"))
+class Profile(Base):
+    full_nm = Column(String)
+    role: Mapped[str] = mapped_column(nullable=False)
+    organisations = relationship("Organisation", backref="user", uselist=False)
+    social_links = relationship("SocialAccount")
 
-    __tablename__ = "token"
-    __table_args__ = (
-        PrimaryKeyConstraint("id", name="token_pk"),
-        UniqueConstraint("access_token"),
-    )
+    __tablename__ = "profile"
 
 
 class User(SQLAlchemyBaseUserTable[int], Base):
-    id = Column(Integer)
-    username = Column(String, nullable=False, index=True)
-    email = Column(String, nullable=False, index=True)
-    role = Column(String, nullable=False)
-    organisations = relationship("Organisation", backref="user", uselist=False)
-    full_nm = Column(String)
-    social_links = relationship("SocialAccount")
-    tokens = relationship("Token")
-    created_on = Column(DateTime(), default=datetime.now())
-    updated_on = Column(DateTime(), default=datetime.now())
+    id: Mapped[int] = mapped_column(primary_key=True)
+    username: Mapped[str] = mapped_column(String, nullable=False, index=True)
 
     __tablename__ = "user"
-    __table_args__ = (
-        PrimaryKeyConstraint("id", name="user_pk"),
-        UniqueConstraint("username"),
-        UniqueConstraint("email"),
-    )
