@@ -57,7 +57,6 @@ class SocialAccount(Base):
 
 
 class User(SQLAlchemyBaseUserTable[int], Base):
-    username: Mapped[str] = mapped_column(String, nullable=False, index=True)
     full_nm: Mapped[str | None]
     organisations = relationship("Organisation", backref="user", uselist=False)
     social_links = relationship("SocialAccount")
