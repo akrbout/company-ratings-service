@@ -12,6 +12,11 @@ class SocialAccount(BaseModel):
     link: AnyUrl = Field(description="Ссылка на социальную сеть")
 
 
+class RegisterUser(BaseModel):
+    email: EmailStr = Field(description="E-Mail address")
+    password: str = Field(description="Password", min_length=8, max_length=32)
+
+
 class User(BaseModel):
     username: str = Field(description="Никнейм пользователя", min_length=5, max_length=20)
     email: EmailStr = Field(description="Почта пользователя")

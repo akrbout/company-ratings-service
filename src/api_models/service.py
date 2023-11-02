@@ -3,7 +3,6 @@ from pydantic import BaseModel
 
 
 class DefaultModel(BaseModel):
-    username: str
     full_nm: str
 
 
