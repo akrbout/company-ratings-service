@@ -16,3 +16,5 @@ export DATABASE_PORT=5432
 export DATABASE_NAME=db
 ```
 3. Запускаем сервис
+
+хуй
